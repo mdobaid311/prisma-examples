@@ -88,6 +88,16 @@ describe("findFreeSlots", () => {
     ]);
   });
 
+  it("keeps searching for a room whose first free time is on a later day", () => {
+    const booked = [{ roomId: "mid", startsAt: at("2026-10-30T06:00:00Z"), endsAt: at("2026-10-31T06:00:00Z") }];
+    const twoDays = { from: TODAY.from, to: at("2026-10-31T23:00:00Z") };
+    expect(starts(findFreeSlots(rooms, booked, { ...twoDays, minutes: 60, seats: 1, now: NOW }))).toEqual([
+      "small 2026-10-30T10:00:00.000Z",
+      "big 2026-10-30T10:00:00.000Z",
+      "mid 2026-10-31T07:00:00.000Z",
+    ]);
+  });
+
   describe("does not depend on the machine's own time zone", () => {
     const original = process.env.TZ;
     afterEach(() => {
